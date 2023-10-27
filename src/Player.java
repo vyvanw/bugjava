@@ -58,39 +58,6 @@ public class Player {
         }
         inventory.addOne(storage.retrieve(item));
     }
-
-    public void craftItem(ItemDefinition craftedItemDefinition, List<ItemInterface> requiredComponents) throws ItemNotAvailableException {
-        // Remove the required components from the inventory
-        for (ItemInterface component : requiredComponents) {
-            inventory.remove(component);
-        }
-
-        // Add the crafted item to the inventory
-        CraftableItem craftedItem = new CraftableItem(craftedItemDefinition);
-        for (ItemInterface component : requiredComponents) {
-            craftedItem.addComponent(component);
-        }
-        inventory.addOne(craftedItem);
-    }
-
-    public void uncraftItem(ItemInterface item) throws ItemNotCraftableException, ItemNotAvailableException {
-        // Check if the item is an instance of CraftableItem
-        if (item instanceof CraftableItem) {
-            CraftableItem craftableItem = (CraftableItem) item;  // Cast to CraftableItem
-    
-            if (!inventory.searchItems(craftableItem.getName()).contains(craftableItem)) {
-                throw new ItemNotAvailableException(craftableItem.getDefinition());
-            }
-            inventory.remove(craftableItem);
-    
-            // Add its components back to the inventory
-            for (ItemInterface component : craftableItem.getComponents()) {
-                inventory.addOne(component);
-            }
-        } else {
-            throw new ItemNotCraftableException(item);
-        }
-    }
     
     
 

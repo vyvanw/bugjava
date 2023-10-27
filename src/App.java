@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.Optional;
+
 import javax.swing.JFrame;
 
 public class App {
@@ -50,16 +53,29 @@ public class App {
     }
 
     void setupCrafting(ItemCraftPage page, Player player) {
-        page.setCraftAction((def) -> player.craftItem(def, null));;
+        page.setCraftAction((def) -> {
+            ItemInterface craftedItem = def.craft(player.getInventory());
+            if (craftedItem != null) {
+                player.getInventory().addOne(craftedItem);
+                System.out.println("Crafted item: " + craftedItem.getDefinition().getName());
+            } else {
+                System.out.println("Failed to craft item.");
+            }
+        });
     }
 
     void setupUncrafting(ProductPage page, Player player) {
         page.setUncraftAction((item) -> {
             if (item instanceof CraftableItem) {
-                player.uncraftItem((CraftableItem) item);
+                List<Item> components = item.getDefinition().uncraft(player.getInventory());
+                for (Item comp : components) {
+                    player.getInventory().addOne(comp);
+                }
+                player.getInventory().removeOne(item.getDefinition());
             } else {
-                System.out.println("The selected item is not a craftable item and cannot be uncrafted.");
+                System.out.println("Item is not a craftable item.");
             }
         });
     }
+    
 }
